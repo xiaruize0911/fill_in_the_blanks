@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语首字母填空练习</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4caf50;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f0f4f8;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .question-container {
+            background-color: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .sentence {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .answer-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sentence strong {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .answer-input {
+            flex: 1;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid #ced4da;
+            border-radius: 4px;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .feedback.incorrect {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .results-container {
+            display: none;
+            background-color: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .score-percentage {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .mistakes-list {
+            margin-top: 1.5rem;
+        }
+
+        .mistake-item {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--danger);
+        }
+
+        .mistake-sentence {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .mistake-answer {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .user-answer {
+            color: var(--danger);
+        }
+
+        .correct-answer {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .restart-btn {
+            display: block;
+            margin: 1.5rem auto 0;
+            background-color: var(--dark);
+        }
+
+        .restart-btn:hover {
+            background-color: black;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem;
+                width: auto;
+            }
+
+            .question-container {
+                padding: 1rem;
+            }
+
+            .answer-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .answer-input {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>英语首字母填空练习</h1>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0/0</div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <div class="sentence" id="sentence"></div>
+            <div class="answer-container">
+                <input type="text" class="answer-input" id="answerInput" placeholder="请输入完整单词...">
+                <button class="btn" id="submitBtn">提交</button>
+            </div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+         <div class="loading" id="loadingContainer" style="display: none;">
+            正在从DeepSeek API获取题目，请稍候...
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2>练习结果</h2>
+                <div>
+                    <span class="score" id="score">0/0</span>
+                    <span class="score-percentage" id="scorePercentage">(0%)</span>
+                </div>
+            </div>
+
+            <div class="mistakes-list" id="mistakesList">
+                <h3>错题列表</h3>
+                <div id="mistakesItems"></div>
+            </div>
+
+            <button class="btn restart-btn" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+
+    <script>
+        // DeepSeek API配置
+        const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+        const DEEPSEEK_API_KEY = 'sk-6695610763c14d30a9088d861df5ea85';
+
+        // 从DeepSeek API获取题目
+        async function fetchQuestions() {
+            loadingContainer.style.display = 'block';
+            questionContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+
+            try {
+                const response = await fetch(DEEPSEEK_API_URL, {
+                    method: 'POST',
+                    response_format: {'type': 'json_object'},
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-chat",
+                        messages: [
+                            {
+                                role: "user",
+                                content:"\
+                                现在你是一名重点中学的高中英语教师，年级组指派你出单句首字母填空题目，共20题。你需要就给你的几个单词以及相应的释义出题，要求：\
+                                1. 使用C1难度的复合句\
+                                2. 句子里需要有足够的信息可以提示到要填的词\
+                                3. 尽量使填的词为唯一答案，即没有别的词带进去也说得通\
+                                4. 多使用屈折变化改变名词的数或者动词的时态、语态，抑或变成现在分词、过去分词等，但是不可以改变单词本身的词性。\
+                                例如：单词：signal；词性：动词；释义：打信号。可以给出下列题目：When my phone suddenly s________ an incoming call during the meeting, I quickly silenced it, but the interruption still made everyone glance at me disapprovingly. 这里填过去式的signalled \
+                                生成一些英语例句，对每个单词各写一个包含它的句子，对应单词用 `*` 占位。单词表如下：\
+                                A: agreeable, anonymous, astounded\
+                                B: bet, bitterly, bittersweet\
+                                C: capacity, cardboard, classic, compose, considerable, considering\
+                                D: dear, deserve\
+                                E: elegant, estimate\
+                                F: faintly, fulfill\
+                                I: illustrate, immortal\
+                                K: kidnapper\
+                                N: note\
+                                O: orderly, overcome\
+                                P: pack, punctually\
+                                R: ransom, recall, relieve, root\
+                                S: span, spirits, suggestive, surrounding, suspension\
+                                T: transform, transport, twist\
+                                U: unlock\
+                                W: weep, withdraw\
+\
+                                输出 JSON 列表，如：\
+                                \
+                                [{\"word\": \"import\", \"sentence\": \"The country's largest * is petroleum, accounting for 40% of trade volume.\"}]\
+                                \
+\
+                                **特别注意：请确保语法全部正确。若对应单词使用其他形式，直接将使用的形式写入 word 字段即可。例如：\'word\': \'brushed\'\
+                                只出20题即可，除了json列表不要包含其它内容、引导词、语气词\
+                                "
+                            }
+                        ],
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let questions;
+                try {
+                    const content = data.choices[0].message.content;
+                    // 移除可能存在的Markdown代码块标记
+                    const cleanContent = content.replace(/```json\s*|```/g, '').trim();
+                    questions = JSON.parse(cleanContent);
+                    
+                    // 检查返回的数据格式
+                    if (!Array.isArray(questions) || questions.length === 0) {
+                        throw new Error('无效的题目数据');
+                    }
+                    // 检查题目格式
+                    if (!questions.every(q => q.word && q.sentence)) {
+                        throw new Error('无效的题目格式');
+                    }
+                } catch (parseError) {
+                    console.error('解析题目数据失败:', parseError);
+                    throw new Error('题目数据格式错误');
+                }
+
+                return Array.isArray(questions) && questions.length > 0 ? questions : questionBank;
+            } catch (error) {
+                console.error('获取题目失败:', error);
+                return questionBank; // 使用默认题库
+            } finally {
+                loadingContainer.style.display = 'none';
+                questionContainer.style.display = 'block';
+            }
+        }
+
+        let questionBank = [
+            {
+                "word": "agreeable",
+                "sentence": "She has an * personality that makes everyone feel welcome."
+            },
+            {
+                "word": "anonymous",
+                "sentence": "The donation was made by an * benefactor."
+            }
+        ];
+
+
+
+        // 初始化应用
+        async function initApp() {
+            try {
+                // 获取题目
+                const questions = await fetchQuestions();
+                
+                // 深拷贝题库并打乱顺序
+                currentState.questions = JSON.parse(JSON.stringify(questions))
+                    .sort(() => Math.random() - 0.5);
+
+                currentState.currentIndex = 0;
+                currentState.correctAnswers = 0;
+                currentState.mistakes = [];
+
+                updateProgress();
+                showCurrentQuestion();
+
+                questionContainer.style.display = 'block';
+                resultsContainer.style.display = 'none';
+
+                // 添加事件监听器
+                submitBtn.addEventListener('click', handleSubmit);
+                answerInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+                restartBtn.addEventListener('click', initApp);
+            } catch (error) {
+                console.error('初始化失败:', error);
+                alert('初始化失败，请刷新页面重试');
+            }
+        }
+
+        // 应用状态
+        let currentState = {
+            questions: [],
+            currentIndex: 0,
+            correctAnswers: 0,
+            mistakes: []
+        };
+
+        // DOM 元素
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const questionContainer = document.getElementById('questionContainer');
+        const sentenceElement = document.getElementById('sentence');
+        const firstLetterElement = document.getElementById('firstLetter');
+        const answerInput = document.getElementById('answerInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const feedback = document.getElementById('feedback');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const score = document.getElementById('score');
+        const scorePercentage = document.getElementById('scorePercentage');
+        const mistakesItems = document.getElementById('mistakesItems');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // 初始化应用
+        async function initApp() {
+            try {
+                // 获取题目
+                const questions = await fetchQuestions();
+                
+                // 深拷贝题库并打乱顺序
+                currentState.questions = JSON.parse(JSON.stringify(questions))
+                    .sort(() => Math.random() - 0.5);
+
+                currentState.currentIndex = 0;
+                currentState.correctAnswers = 0;
+                currentState.mistakes = [];
+
+                updateProgress();
+                showCurrentQuestion();
+
+                questionContainer.style.display = 'block';
+                resultsContainer.style.display = 'none';
+
+                // 添加事件监听器
+                submitBtn.addEventListener('click', handleSubmit);
+                answerInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+                restartBtn.addEventListener('click', initApp);
+            } catch (error) {
+                console.error('初始化失败:', error);
+                alert('初始化失败，请刷新页面重试');
+            }
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const total = currentState.questions.length;
+            const current = currentState.currentIndex + 1;
+            const percentage = (currentState.currentIndex / total) * 100;
+
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${currentState.currentIndex}/${total}`;
+        }
+
+        // 显示当前问题
+        function showCurrentQuestion() {
+            if (currentState.currentIndex >= currentState.questions.length) {
+                showResults();
+                return;
+            }
+
+            const currentQuestion = currentState.questions[currentState.currentIndex];
+            const answer = currentQuestion.word;
+            const firstLetter = answer.charAt(0);
+
+            // 创建带有加粗首字母的句子
+            const sentenceWithFirstLetter = currentQuestion.sentence.replace(
+                '*',
+                `<strong>${firstLetter}${'_'.repeat(answer.length - 1)}</strong>`
+            );
+
+            sentenceElement.innerHTML = sentenceWithFirstLetter;
+
+            answerInput.value = '';
+            answerInput.focus();
+            feedback.style.display = 'none';
+
+            // 更新进度
+            updateProgress();
+        }
+
+        // 处理提交
+        function handleSubmit() {
+            const currentQuestion = currentState.questions[currentState.currentIndex];
+            const correctAnswer = currentQuestion.word;
+            const userAnswer = answerInput.value.trim();
+
+            // 检查答案（忽略大小写）
+            const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+
+            // 显示反馈
+            feedback.style.display = 'block';
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = `正确! 答案是: ${correctAnswer}`;
+                currentState.correctAnswers++;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `错误! 正确答案是: ${correctAnswer}`;
+
+                // 记录错误
+                currentState.mistakes.push({
+                    sentence: currentQuestion.sentence,
+                    correctAnswer: correctAnswer,
+                    userAnswer: userAnswer
+                });
+            }
+
+            // 禁用输入和按钮
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+
+            // 延迟后进入下一题
+            setTimeout(() => {
+                answerInput.disabled = false;
+                submitBtn.disabled = false;
+                currentState.currentIndex++;
+                showCurrentQuestion();
+            }, isCorrect ? 1000 : 2000);
+        }
+
+        // 显示结果
+        function showResults() {
+            questionContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            const total = currentState.questions.length;
+            const correct = currentState.correctAnswers;
+            const percentage = Math.round((correct / total) * 100);
+
+            score.textContent = `${correct}/${total}`;
+            scorePercentage.textContent = `(${percentage}%)`;
+
+            // 显示错题
+            mistakesItems.innerHTML = '';
+            if (currentState.mistakes.length === 0) {
+                mistakesItems.innerHTML = '<p>太棒了！没有错题！</p>';
+            } else {
+                currentState.mistakes.forEach(mistake => {
+                    const sentenceWithHighlight = mistake.sentence.replace(
+                        '*',
+                        `<span class="correct-answer">${mistake.correctAnswer}</span>`
+                    );
+
+                    const mistakeItem = document.createElement('div');
+                    mistakeItem.className = 'mistake-item';
+                    mistakeItem.innerHTML = `
+                        <div class="mistake-sentence">${sentenceWithHighlight}</div>
+                        <div class="mistake-answer">
+                            <span class="user-answer">你的答案: ${mistake.userAnswer}</span>
+                            <span class="correct-answer">正确答案: ${mistake.correctAnswer}</span>
+                        </div>
+                    `;
+
+                    mistakesItems.appendChild(mistakeItem);
+                });
+            }
+
+            // 更新进度条为完成状态
+            progressFill.style.width = '100%';
+            progressText.textContent = `${total}/${total}`;
+        }
+
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>
